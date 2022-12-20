@@ -1,0 +1,28 @@
+[0.093s] Invoking command in '/home/kido/turtlebot3_ws/build/turtlebot3_simulations': CMAKE_PREFIX_PATH=/home/kido/turtlebot3_ws/install/turtlebot3_gazebo:/home/kido/turtlebot3_ws/install/turtlebot3_fake_node:/home/kido/turtlebot3_ws/install/turtlebot3_simulations:/opt/ros/foxy CONDA_PROMPT_MODIFIER=(base) /usr/bin/cmake --build /home/kido/turtlebot3_ws/build/turtlebot3_simulations -- -j8 -l8
+[0.235s] -- Found ament_cmake: 0.9.11 (/opt/ros/foxy/share/ament_cmake/cmake)
+[0.296s] -- Found PythonInterp: /usr/bin/python3 (found suitable version "3.10.9", minimum required is "3") 
+[0.296s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[0.606s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[1.035s] -- Configuring done
+[1.147s] -- Generating done
+[1.161s] -- Build files have been written to: /home/kido/turtlebot3_ws/build/turtlebot3_simulations
+[1.184s] Invoked command in '/home/kido/turtlebot3_ws/build/turtlebot3_simulations' returned '0': CMAKE_PREFIX_PATH=/home/kido/turtlebot3_ws/install/turtlebot3_gazebo:/home/kido/turtlebot3_ws/install/turtlebot3_fake_node:/home/kido/turtlebot3_ws/install/turtlebot3_simulations:/opt/ros/foxy CONDA_PROMPT_MODIFIER=(base) /usr/bin/cmake --build /home/kido/turtlebot3_ws/build/turtlebot3_simulations -- -j8 -l8
+[1.213s] Invoking command in '/home/kido/turtlebot3_ws/build/turtlebot3_simulations': CMAKE_PREFIX_PATH=/home/kido/turtlebot3_ws/install/turtlebot3_gazebo:/home/kido/turtlebot3_ws/install/turtlebot3_fake_node:/home/kido/turtlebot3_ws/install/turtlebot3_simulations:/opt/ros/foxy CONDA_PROMPT_MODIFIER=(base) /usr/bin/cmake --install /home/kido/turtlebot3_ws/build/turtlebot3_simulations
+[1.224s] -- Install configuration: ""
+[1.225s] -- Execute custom install script
+[1.225s] -- Up-to-date symlink: /home/kido/turtlebot3_ws/install/turtlebot3_simulations/share/ament_index/resource_index/package_run_dependencies/turtlebot3_simulations
+[1.226s] -- Up-to-date symlink: /home/kido/turtlebot3_ws/install/turtlebot3_simulations/share/ament_index/resource_index/parent_prefix_path/turtlebot3_simulations
+[1.226s] -- Up-to-date symlink: /home/kido/turtlebot3_ws/install/turtlebot3_simulations/share/turtlebot3_simulations/environment/ament_prefix_path.sh
+[1.226s] -- Up-to-date symlink: /home/kido/turtlebot3_ws/install/turtlebot3_simulations/share/turtlebot3_simulations/environment/ament_prefix_path.dsv
+[1.227s] -- Up-to-date symlink: /home/kido/turtlebot3_ws/install/turtlebot3_simulations/share/turtlebot3_simulations/environment/path.sh
+[1.227s] -- Up-to-date symlink: /home/kido/turtlebot3_ws/install/turtlebot3_simulations/share/turtlebot3_simulations/environment/path.dsv
+[1.227s] -- Up-to-date symlink: /home/kido/turtlebot3_ws/install/turtlebot3_simulations/share/turtlebot3_simulations/local_setup.bash
+[1.227s] -- Up-to-date symlink: /home/kido/turtlebot3_ws/install/turtlebot3_simulations/share/turtlebot3_simulations/local_setup.sh
+[1.228s] -- Up-to-date symlink: /home/kido/turtlebot3_ws/install/turtlebot3_simulations/share/turtlebot3_simulations/local_setup.zsh
+[1.228s] -- Up-to-date symlink: /home/kido/turtlebot3_ws/install/turtlebot3_simulations/share/turtlebot3_simulations/local_setup.dsv
+[1.228s] -- Symlinking: /home/kido/turtlebot3_ws/install/turtlebot3_simulations/share/turtlebot3_simulations/package.dsv
+[1.240s] -- Up-to-date symlink: /home/kido/turtlebot3_ws/install/turtlebot3_simulations/share/ament_index/resource_index/packages/turtlebot3_simulations
+[1.240s] -- Up-to-date symlink: /home/kido/turtlebot3_ws/install/turtlebot3_simulations/share/turtlebot3_simulations/cmake/turtlebot3_simulationsConfig.cmake
+[1.241s] -- Up-to-date symlink: /home/kido/turtlebot3_ws/install/turtlebot3_simulations/share/turtlebot3_simulations/cmake/turtlebot3_simulationsConfig-version.cmake
+[1.241s] -- Up-to-date symlink: /home/kido/turtlebot3_ws/install/turtlebot3_simulations/share/turtlebot3_simulations/package.xml
+[1.253s] Invoked command in '/home/kido/turtlebot3_ws/build/turtlebot3_simulations' returned '0': CMAKE_PREFIX_PATH=/home/kido/turtlebot3_ws/install/turtlebot3_gazebo:/home/kido/turtlebot3_ws/install/turtlebot3_fake_node:/home/kido/turtlebot3_ws/install/turtlebot3_simulations:/opt/ros/foxy CONDA_PROMPT_MODIFIER=(base) /usr/bin/cmake --install /home/kido/turtlebot3_ws/build/turtlebot3_simulations

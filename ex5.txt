@@ -1,0 +1,196 @@
+# Task 1:
+
+- Duplicate the world, model, launch file from turtlebot3_world
+- Create a new world and merge into new .sdf file
+- Colcon build, source, and run
+
+# Task 2:
+
+- Topic:
+/scan
+Laser scans to create the map from
+
+/global_costmap/costmap
+/global_costmap/costmap_updates
+/global_plan
+/local_costmap/footprint
+/local_costmap/costmap
+/local_costmap/costmap_updates
+/local_plan
+/particlecloud
+/map
+Get the map data from this topic, which is latched, and updated periodically
+
+/map_updates
+/trajectory_node_list
+/constraint_list
+/landmark_poses_list
+/scan_matched_points
+/tf 
+Transforms necessary to relate frames for laser, base, and odometry 
+
+- Lua configuration:
+map_frame
+The ROS frame ID to use for publishing submaps, the parent frame of poses, usually “map”.
+
+tracking_frame
+The ROS frame ID of the frame that is tracked by the SLAM algorithm. If an IMU is used, it should be at its position, although it might be rotated. A common choice is “imu_link”.
+
+published_frame
+The ROS frame ID to use as the child frame for publishing poses. For example “odom” if an “odom” frame is supplied by a different part of the system. In this case the pose of “odom” in the map_frame will be published. Otherwise, setting it to “base_link” is likely appropriate.
+
+odom_frame
+Only used if provide_odom_frame is true. The frame between published_frame and map_frame to be used for publishing the (non-loop-closed) local SLAM result. Usually “odom”.
+
+provide_odom_frame
+If enabled, the local, non-loop-closed, continuous pose will be published as the odom_frame in the map_frame.
+
+publish_frame_projected_to_2d
+If enabled, the published pose will be restricted to a pure 2D pose (no roll, pitch, or z-offset). This prevents potentially unwanted out-of-plane poses in 2D mode that can occur due to the pose extrapolation step (e.g. if the pose shall be published as a ‘base-footprint’-like frame)
+
+use_odometry
+If enabled, subscribes to nav_msgs/Odometry on the topic “odom”. Odometry must be provided in this case, and the information will be included in SLAM.
+
+use_nav_sat
+If enabled, subscribes to sensor_msgs/NavSatFix on the topic “fix”. Navigation data must be provided in this case, and the information will be included in the global SLAM.
+
+use_landmarks
+If enabled, subscribes to cartographer_ros_msgs/LandmarkList on the topic “landmarks”. Landmarks must be provided, as cartographer_ros_msgs/LandmarkEntry within cartographer_ros_msgs/LandmarkList. If cartographer_ros_msgs/LandmarkEntry data is provided the information will be included in the SLAM according to the ID of the cartographer_ros_msgs/LandmarkEntry. The cartographer_ros_msgs/LandmarkList should be provided at a sample rate comparable to the other sensors. The list can be empty but has to be provided because Cartographer strictly time orders sensor data in order to make the landmarks deterministic. However it is possible to set the trajectory builder option “collate_landmarks” to false and allow for a non-deterministic but also non-blocking approach.
+
+num_laser_scans
+Number of laser scan topics to subscribe to. Subscribes to sensor_msgs/LaserScan on the “scan” topic for one laser scanner, or topics “scan_1”, “scan_2”, etc. for multiple laser scanners.
+
+num_multi_echo_laser_scans
+Number of multi-echo laser scan topics to subscribe to. Subscribes to sensor_msgs/MultiEchoLaserScan on the “echoes” topic for one laser scanner, or topics “echoes_1”, “echoes_2”, etc. for multiple laser scanners.
+
+num_subdivisions_per_laser_scan
+Number of point clouds to split each received (multi-echo) laser scan into. Subdividing a scan makes it possible to unwarp scans acquired while the scanners are moving. There is a corresponding trajectory builder option to accumulate the subdivided scans into a point cloud that will be used for scan matching.
+
+num_point_clouds
+Number of point cloud topics to subscribe to. Subscribes to sensor_msgs/PointCloud2 on the “points2” topic for one rangefinder, or topics “points2_1”, “points2_2”, etc. for multiple rangefinders.
+
+lookup_transform_timeout_sec
+Timeout in seconds to use for looking up transforms using tf2.
+
+submap_publish_period_sec
+Interval in seconds at which to publish the submap poses, e.g. 0.3 seconds.
+
+pose_publish_period_sec
+Interval in seconds at which to publish poses, e.g. 5e-3 for a frequency of 200 Hz.
+
+publish_to_tf
+Enable or disable providing of TF transforms.
+
+publish_tracked_pose
+Enable publishing of tracked pose as a geometry_msgs/PoseStamped to topic “tracked_pose”.
+
+trajectory_publish_period_sec
+Interval in seconds at which to publish the trajectory markers, e.g. 30e-3 for 30 milliseconds.
+
+rangefinder_sampling_ratio
+Fixed ratio sampling for range finders messages.
+
+odometry_sampling_ratio
+Fixed ratio sampling for odometry messages.
+
+fixed_frame_sampling_ratio
+Fixed ratio sampling for fixed frame messages.
+
+imu_sampling_ratio
+Fixed ratio sampling for IMU messages.
+
+landmarks_sampling_ratio
+Fixed ratio sampling for landmarks messages.
+
+TRAJECTORY_BUILDER_nD.min_range
+TRAJECTORY_BUILDER_nD.max_range
+Range of the measured distance.
+In 2D, Cartographer replaces ranges further than max_range by TRAJECTORY_BUILDER_2D.missing_data_ray_length
+
+TRAJECTORY_BUILDER_2D.use_imu_data
+TRAJECTORY_BUILDER_nD.imu_gravity_time_constant
+An Inertial Measurement Unit can be an useful source of information for SLAM because it provides an accurate direction of gravity (hence, of the ground) and a noisy but good overall indication of the robot’s rotation.
+
+TRAJECTORY_BUILDER_nD.use_online_correlative_scan_matching
+TRAJECTORY_BUILDER_nD.real_time_correlative_scan_matcher.linear_search_window
+TRAJECTORY_BUILDER_nD.real_time_correlative_scan_matcher.angular_search_window
+TRAJECTORY_BUILDER_nD.real_time_correlative_scan_matcher.translation_delta_cost_weight
+TRAJECTORY_BUILDER_nD.real_time_correlative_scan_matcher.rotation_delta_cost_weight
+The RealTimeCorrelativeScanMatcher can be toggled depending on the trust you have in your sensors. It works by searching for similar scans in a search window which is defined by a maximum distance radius and a maximum angle radius. When performing scan matching with scans found in this window, a different weight can be chosen for the translational and rotational components.
+
+TRAJECTORY_BUILDER_nD.motion_filter.max_time_seconds
+TRAJECTORY_BUILDER_nD.motion_filter.max_distance_meters
+TRAJECTORY_BUILDER_nD.motion_filter.max_angle_radians
+To avoid inserting too many scans per submaps, once a motion between two scans is found by the scan matcher, it goes through a motion filter. A scan is dropped if the motion that led to it is not considered as significant enough. A scan is inserted into the current submap only if its motion is above a certain distance, angle or time threshold.
+
+POSE_GRAPH.constraint_builder.max_constraint_distance
+POSE_GRAPH.fast_correlative_scan_matcher.linear_search_window
+POSE_GRAPH.fast_correlative_scan_matcher_3d.linear_xy_search_window
+POSE_GRAPH.fast_correlative_scan_matcher_3d.linear_z_search_window
+POSE_GRAPH.fast_correlative_scan_matcher*.angular_search_window
+The global SLAM is a kind of “GraphSLAM”, it is essentially a pose graph optimization which works by building constraints between nodes and submaps and then optimizing the resulting constraints graph. Constraints can intuitively be thought of as little ropes tying all nodes together. The sparse pose adjustment fastens those ropes altogether. The resulting net is called the “pose graph”.
+Global constraints (also referred to as loop closure constraints or inter submaps constraints) are regularly searched between a new submap and previous nodes that are considered “close enough” in space (part of a certain search window) and a strong fit (a good match when running scan matching). Intuitively, those “global ropes” introduce knots in the structure and firmly bring two strands closer.
+
+- Map save:
+image: /home/kido/turtlebot3_ws/map.pgm
+Path to the image file containing the occupancy data; can be absolute, or relative to the location of the YAML file
+
+mode: trinary
+Can have one of three values: trinary, scale, or raw. 
+trinary: occupied, free, unknown
+scale: occupied: 100, free: 0, others: between
+raw: [0, 255]
+
+resolution: 0.05
+Resolution of the map, meters / pixel
+
+origin: [-3.56, -3.58, 0]
+The 2-D pose of the lower-left pixel in the map, as (x, y, yaw), with yaw as counterclockwise rotation (yaw=0 means no rotation). Many parts of the system currently ignore yaw.
+
+negate: 0
+Whether the white/black free/occupied semantics should be reversed (interpretation of thresholds is unaffected)
+
+occupied_thresh: 0.65
+Pixels with occupancy probability greater than this threshold are considered completely occupied.
+
+free_thresh: 0.25
+Pixels with occupancy probability less than this threshold are considered completely free.
+
+# Task 03:
+Sensors:
+- IMU
+- Lidar
+- Current sensor
+
+Path projected forward robot:
+- red, green, blue: axes of different parts (scan, base, caster, imu, wheels)
+- yellow: difference in position between the original odometry with current odometry
+- pink: global trajectory planning
+- blue: local trajectory planning
+
+inflation_radius (0.55)
+The radius in meters to which the map inflates obstacle cost values.
+The bigger, the lower risk of collisions, path might be unnecessary longer OR impossible
+The lower, the higher risk of inscribed collisions
+
+cost_scaling_factor (10)
+Apply to cost values during inflation. The cost function is computed as follows for all cells in the costmap further than the inscribed radius distance and closer than the inflation radius distance away from an actual obstacle:
+exp(-1.0 * cost_scaling_factor * (distance_from_obstacle - inscribed_radius)) * (costmap_2d::INSCRIBED_INFLATED_OBSTACLE - 1)
+The bigger, the lower cost, the higher risk that the global plan makes risky trajectory and the local plan missed incoming inscribed collision
+The lower, the higher cost, the more likely global plan ignore promising trajectory, and the local plan slows the movement
+
+# Task 04:
+Lidar: 
+- GMapping
+Uses Particle filter and Grid-based map; final map does not represents the real environment map 
+- Hector*
+Same as GMapping but with additional PoseWithCovarianceStamped; can be used for navigation of MobileRobot; sensitive with rotational movement (no odometry information)
+- Cartographer*
+Uses the scan_to_submap matching idea to find out the exact pose of the scan, which reduced the
+cumulative error of the long-term iterative pose estimation. The accurate mapping performance was
+achieved by loop detection for the multiple submaps and scans constructed with the help of brand and
+bound acceleration strategy
+
+Monocular (camera): Large Scale Direct* (LSD), Oriented FAST and Rotated BRIEF (ORB), Direct Sparse Odometry* (DSO), Parallel Tracking and mapping (PTAM), Semi-direct Visual Odometry (SVO), Dense Piecewise Parallel Tracking and Mapping (DPPTAM),
+
+Stereo (camera): ZEDfu, Real-Time Appearance-Based Mapping* (RTAB), Setero Parallel Tracking and Mapping* (SPTAM), Oriented FAST and Rotated BRIEF* (ORB)
