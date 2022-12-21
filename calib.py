@@ -15,6 +15,8 @@
 import rclpy
 import numpy
 from rclpy.node import Node
+from math import sqrt, pow
+from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy
 from nav2_msgs.msg import ParticleCloud
 from nav_msgs.msg import Odometry
 from std_msgs.msg import Int32
@@ -26,40 +28,72 @@ class Server(Node):
         super().__init__('minimal_subscriber')
         self.position = Point()
         self.particles = PoseArray()
-        self.tolerance = 1.0
+        self.tolerance = 0.2
+        self.msg = Twist()
+        self.error = 0.3
         self.publisher_ = self.create_publisher(Twist, 'cmd_vel', 10)
+        qos_sensor = QoSProfile(reliability=QoSReliabilityPolicy.RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT,
+                                history=QoSHistoryPolicy.RMW_QOS_POLICY_HISTORY_KEEP_LAST,
+                                depth=1)
 
-        self.particle_cloud_subscription = self.create_subscription(PoseArray, 'particlecloud', self.particle_cloud_callback, 10)
+        self.particlecloud_subscription = self.create_subscription(PoseArray, 'particlecloud',
+                                                                     self.particlecloud_callback, qos_sensor)
+        self.particle_cloud_subscription = self.create_subscription(ParticleCloud, 'particle_cloud',
+                                                                    self.particle_cloud_callback, qos_sensor)
         self.odom_subscription = self.create_subscription(Odometry, 'odom', self.odom_callback, 10)
 
     def odom_callback(self, msg):
         # print("odom message")
         self.position = msg.pose.pose.position
+        if self.error < self.tolerance:
+            self.publish(True)
+            quit()
+        else:
+            self.publish(False)
 
     def particle_cloud_callback(self, msg):
-        print("particle message")
-        self.particles = msg
-        # print(self.particles)
+        particles = msg.particles
+        current_position = self.position
+        error = 0.0
+        for particle in particles:
+            error = error + particle.weight * self.dist_calc(particle.pose.position, current_position)
+        self.error = error
+        print("W/ Weight:", self.error)
+
+    def particlecloud_callback(self, msg):
+        particles = msg.poses
+        current_position = self.position
+        error = 0.0
+        for particle in particles:
+            error = error + self.dist_calc(particle.position, current_position)
+
+        self.error = error / len(particles)
+        print("W/O Weight:", self.error)
+
+    def dist_calc(self, particle, pose):
+        return sqrt(pow(particle.x - pose.x, 2) + pow(particle.y - pose.y, 2))
 
     def publish(self, stop):
         try:
             msg = Twist()
 
             if stop:
-                msg.angular.z = 0
+                msg.angular.z = 0.0
 
             else:
-                msg.angular.z = 0.5
-            self.get_logger().info('Publishing...')
+                diff = self.error - self.tolerance
+                if diff < 0.1:
+                    msg.angular.z = 0.1
+
+                elif diff > 0.6:
+                    msg.angular.z = 0.6
+
+                else:
+                    msg.angular.z = diff
+
             self.publisher_.publish(msg)
         except KeyError:
             pass
-
-
-def ros_spin(node):
-    while rclpy.ok():
-        rclpy.spin_once(node, timeout_sec=0.001)
-
 
 def main(args=None):
     rclpy.init(args=args)
